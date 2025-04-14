@@ -418,14 +418,14 @@ def vit_giant2(patch_size=16, **kwargs):
 
 class DINOv2Featurizer(nn.Module):
 
-    def __init__(self, arch, patch_size, feat_type):
+    def __init__(self, arch, patch_size, feat_type, n_feats=384):
         super().__init__()
         self.arch = arch
         self.patch_size = patch_size
         self.feat_type = feat_type
 
-        self.n_feats = 128
-        self.model = torch.hub.load('facebookresearch/dinov2', 'dinov2_vits14')
+        self.n_feats = n_feats
+        self.model = torch.hub.load('facebookresearch/dinov2', arch)
 
     def get_cls_token(self, img):
         return self.model.forward(img)
@@ -433,4 +433,4 @@ class DINOv2Featurizer(nn.Module):
     def forward(self, img, n=1, include_cls=False):
         h = img.shape[2] // self.patch_size
         w = img.shape[3] // self.patch_size
-        return self.model.forward_features(img)["x_norm_patchtokens"].reshape(-1, h, w, 384).permute(0, 3, 1, 2)
+        return self.model.forward_features(img)["x_norm_patchtokens"].reshape(-1, h, w, self.n_feats).permute(0, 3, 1, 2)

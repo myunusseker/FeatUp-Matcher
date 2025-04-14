@@ -230,7 +230,7 @@ class JBULearnedRange(torch.nn.Module):
     def forward(self, source, guidance):
         GB, GC, GH, GW = guidance.shape
         SB, SC, SH, SQ = source.shape
-        assert (SB == GB)
+        assert (SB == GB), f"Source shape {source.shape} does not match with GB shape {guidance.shape}"
 
         spatial_kernel = self.get_spatial_kernel(source.device)
         range_kernel = self.get_range_kernel(guidance)
